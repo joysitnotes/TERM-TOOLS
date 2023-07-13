@@ -1,0 +1,46 @@
+#!/bin/bash
+
+line="-----------------------------------"
+
+work () { 
+      
+	echo "$line"
+        echo  "Application Installed"
+ 	echo "$line"
+	
+	iwconfig
+	echo "$line"
+	read -p "Choose Interface: " interface
+	echo "$line"
+       
+        sudo ifconfig $interface down
+        sudo macchanger $interface -a
+        sudo ifconfig $interface up
+        
+        echo "$line"
+}
+
+
+app_install () {
+	echo "$line"
+	echo "Macchanger Not Installed: "
+	echo "$line"
+	read -p "Install (y/n)? " choice
+	if [[ $choice = "y" || $choice = "Y" ]]
+	then
+		sudo apt install macchanger
+		work
+	else
+		exit
+	fi
+}
+
+
+if [ "$(which macchanger)" != "/usr/bin/macchanger" ]
+then
+        app_install
+else
+	work
+fi
+
+
