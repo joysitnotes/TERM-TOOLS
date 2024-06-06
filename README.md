@@ -1,5 +1,5 @@
 Useful bash scripts and command line applications
 
-mash : mac changer \n
+mash : mac changer <br>
 loca: show current location
 
