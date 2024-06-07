@@ -1,8 +1,10 @@
 sudo chmod +x loca
 sudo chmod +x mash
+sudo chmod +x ipl
 
 sudo cp loca /usr/bin
 sudo cp mash /usr/bin
+sudo cp ipl /usr/bin
 
 
 gcc cr.c -o cr
