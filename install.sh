@@ -16,3 +16,4 @@ sudo cp update /usr/bin
 sudo cp web /usr/bin
 sudo cp cr  /usr/bin
 sudo cp jc /usr/bin
+sudo cp /usr/bin/clear /usr/bin/cls
