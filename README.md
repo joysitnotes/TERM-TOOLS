@@ -8,7 +8,7 @@ jc: just compile C/C++ programs <br>
 ipl: ip locate, locate ips <br>
 update: updates and upgrades system <br>
 web: start a python webserver in current directory <br>
-
+rc: recycle bin applicaion <br>
 ## Install Instructions:
 sudo chmod +x install.sh <br>
 ./install.sh
