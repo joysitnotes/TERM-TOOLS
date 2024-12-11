@@ -1,0 +1,123 @@
+#!/usr/bin/bash
+filename=$1
+
+currentDir=$(pwd)
+binDir=$HOME"/recyclebin"
+num=$(date +%Y-%m-%d_%H-%M-%S)
+restoreFilename="reception.csv"
+restoreFilePath="$binDir/filenames/$restoreFilename"
+originalPathName="$currentDir/$filename"
+newfilename="$num-$filename.gz"
+newBinPath="$binDir/trash/$newfilename"
+
+
+function help_menu() {
+	echo "rc <filename>        : to delete"
+	echo "rc -r <rc-filename> : restore to restored dir in recyclebin"
+	echo "rc -ro <rc-filename> : restore to original path"
+	echo "rc -h or rc --help   : print help menu"
+}
+
+
+function delete_file() {
+	#compress and add to recyclebin
+	gzip -c $filename > $newBinPath
+	echo "$newfilename,$filename,$originalPathName" >> $restoreFilePath
+	echo "$originalPathName moved to $newBinPath"
+	rm $filename
+	
+}
+
+function restore_restored() {
+	#decompress and save to original dir
+    local original_ifs=$IFS  # Save the original IFS
+    IFS=","     # Set IFS to comma
+	
+	foundVals=$(cat $restoreFilePath | grep $1)
+	if [[ -z $foundVals ]]; then
+		echo "ERROR: file not found"
+		IFS=$original_ifs
+		exit 1
+	fi
+	
+
+	read -r newfilename filename originalPathName <<< "$foundVals"
+
+	newfilename=$(echo "$newfilename" | xargs)
+	filename=$(echo "$filename" | xargs)
+	originalPathName=$(echo "$originalPathName" | xargs)
+	gzip -dc "$1" > "$binDir/restored/$filename"
+	rm $1
+	
+	cat $restoreFilePath | grep -v "$foundVals" > "$binDir/filenames/file.tmp"
+	cp  "$binDir/filenames/file.tmp" $restoreFilePath
+	rm  "$binDir/filenames/file.tmp"
+
+	IFS=$original_ifs
+	echo "restored $filename to $binDir/restored/$filename"	
+}
+
+
+function restore_original() {
+	#decompress and save to original dir
+    local original_ifs=$IFS  # Save the original IFS
+    IFS=","     # Set IFS to comma
+	
+	foundVals=$(cat $restoreFilePath | grep $1)
+	if [[ -z $foundVals ]]; then
+		echo "ERROR: file not found"
+		IFS=$original_ifs
+		exit 1
+	fi
+	
+
+	read -r newfilename filename originalPathName <<< "$foundVals"
+
+	newfilename=$(echo "$newfilename" | xargs)
+	filename=$(echo "$filename" | xargs)
+	originalPathName=$(echo "$originalPathName" | xargs)
+	gzip -dc "$1" > "$originalPathName"
+	rm $1
+	
+	cat $restoreFilePath | grep -v "$foundVals" > "$binDir/filenames/file.tmp"
+	cp  "$binDir/filenames/file.tmp" $restoreFilePath
+	rm  "$binDir/filenames/file.tmp"
+
+	IFS=$original_ifs
+	echo "restored $filename to $originalPathName"	
+}
+
+
+
+if [[ ! -d $binDir ]]; then
+	# create dir and reception.rcb
+	echo "Creating folders"
+	mkdir $binDir
+	mkdir "$binDir/restored"
+	mkdir "$binDir/trash"
+	mkdir "$binDir/filenames"
+	touch "$binDir/filenames/$restoreFilename"
+fi
+
+if [[ $# -eq 0 || $1 == "h" || $1 == "--help" ]]; then
+	help_menu
+	exit 1
+fi
+
+if [[ $1 == '-r' ]]; then
+	if [[ $# -eq 1 ]]; then
+		help_menu
+	else
+		restore_restored $2
+	fi
+elif [[ $1 == '-ro' ]]; then
+	if [[ $# -eq 1 ]]; then
+		help_menu
+	else
+		restore_original $2
+	fi
+else
+	delete_file
+fi
+
+
