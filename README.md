@@ -1,5 +1,5 @@
 
-Useful command line applications
+# Useful command line applications
 ## Applications:
 | Command | Description                                      |
 |---------|--------------------------------------------------|
@@ -13,5 +13,4 @@ Useful command line applications
 | `rc`    | Recycle bin application                          |
 
 ## Install Instructions:
-sudo chmod +x install.sh <br>
-./install.sh
+sudo chmod +x install.sh && ./install.sh
