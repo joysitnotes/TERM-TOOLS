@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 filename=$1
-
 currentDir=$(pwd)
 binDir=$HOME"/recyclebin"
 num=$(date +%Y-%m-%d_%H-%M-%S)
@@ -12,10 +11,13 @@ newBinPath="$binDir/trash/$newfilename"
 
 
 function help_menu() {
-	echo "rc <filename>        : to delete"
-	echo "rc -r <rc-filename> : restore to restored dir in recyclebin"
-	echo "rc -ro <rc-filename> : restore to original path"
-	echo "rc -h or rc --help   : print help menu"
+	echo "rc     <filename>    : To delete"
+	echo "rc -r  <rc-filename> : Restore to restored dir in recyclebin"
+	echo "rc -ro <rc-filename> : Restore to original path"
+	echo "rc -s  <searh-term>  : Search bin"
+	echo "rc -e                : Empty recyclebin"
+	echo "rc -l                : List bin contents"
+	echo "rc -h or rc --help   : Print help menu"
 }
 
 
@@ -28,11 +30,12 @@ function delete_file() {
 	
 }
 
-function restore_restored() {
-	#decompress and save to original dir
-    local original_ifs=$IFS  # Save the original IFS
-    IFS=","     # Set IFS to comma
-	
+# Take two arguments. File name and type of restore
+function restore() {
+	#decompress and save to restored dir
+    local original_ifs=$IFS  
+    IFS=","    
+
 	foundVals=$(cat $restoreFilePath | grep $1)
 	if [[ -z $foundVals ]]; then
 		echo "ERROR: file not found"
@@ -46,51 +49,54 @@ function restore_restored() {
 	newfilename=$(echo "$newfilename" | xargs)
 	filename=$(echo "$filename" | xargs)
 	originalPathName=$(echo "$originalPathName" | xargs)
-	gzip -dc "$1" > "$binDir/restored/$filename"
-	rm $1
 	
-	cat $restoreFilePath | grep -v "$foundVals" > "$binDir/filenames/file.tmp"
-	cp  "$binDir/filenames/file.tmp" $restoreFilePath
-	rm  "$binDir/filenames/file.tmp"
-
-	IFS=$original_ifs
-	echo "restored $filename to $binDir/restored/$filename"	
-}
-
-
-function restore_original() {
-	#decompress and save to original dir
-    local original_ifs=$IFS  # Save the original IFS
-    IFS=","     # Set IFS to comma
-	
-	foundVals=$(cat $restoreFilePath | grep $1)
-	if [[ -z $foundVals ]]; then
-		echo "ERROR: file not found"
-		IFS=$original_ifs
-		exit 1
+	if [[ $2 -eq 1 ]]; then
+		gzip -dc "$binDir/trash/$1" > "$binDir/restored/$filename"
+		echo "restored $filename to $binDir/restored/$filename"	
+	else
+		gzip -dc "$binDir/trash/$1" > "$originalPathName"
+		echo "restored $filename to $originalPathName"	
 	fi
-	
 
-	read -r newfilename filename originalPathName <<< "$foundVals"
 
-	newfilename=$(echo "$newfilename" | xargs)
-	filename=$(echo "$filename" | xargs)
-	originalPathName=$(echo "$originalPathName" | xargs)
-	gzip -dc "$1" > "$originalPathName"
-	rm $1
+	rm "$binDir/trash/$1"
 	
 	cat $restoreFilePath | grep -v "$foundVals" > "$binDir/filenames/file.tmp"
 	cp  "$binDir/filenames/file.tmp" $restoreFilePath
 	rm  "$binDir/filenames/file.tmp"
 
 	IFS=$original_ifs
-	echo "restored $filename to $originalPathName"	
 }
 
+
+function empty() {
+	dir="$binDir/trash/*"
+	file="$HOME/recyclebin/filenames/reception.csv"
+	rm -rf $dir 
+
+	if [ -z "$(ls -A "$binDir/trash/")" ]; then
+		echo "Recycle Bin Empty"
+		rm -rf $file
+		touch $file
+	else
+		exit 1	
+	fi
+}
+
+function list_bin() {
+	dir="$binDir/trash/"
+	ls $dir
+}
+
+
+function search_bin() {
+	dir="$binDir/trash/"
+	ls $dir | grep $1
+}
 
 
 if [[ ! -d $binDir ]]; then
-	# create dir and reception.rcb
+	# create dir and reception.csv
 	echo "Creating folders"
 	mkdir $binDir
 	mkdir "$binDir/restored"
@@ -99,7 +105,7 @@ if [[ ! -d $binDir ]]; then
 	touch "$binDir/filenames/$restoreFilename"
 fi
 
-if [[ $# -eq 0 || $1 == "h" || $1 == "--help" ]]; then
+if [[ $# -eq 0 || $1 == "-h" || $1 == "--help" ]]; then
 	help_menu
 	exit 1
 fi
@@ -108,13 +114,23 @@ if [[ $1 == '-r' ]]; then
 	if [[ $# -eq 1 ]]; then
 		help_menu
 	else
-		restore_restored $2
+		restore $2 1
 	fi
 elif [[ $1 == '-ro' ]]; then
 	if [[ $# -eq 1 ]]; then
 		help_menu
 	else
-		restore_original $2
+		restore $2 2
+	fi
+elif [[ $1 == '-e' ]]; then
+	empty
+elif [[ $1 == '-l' ]]; then
+	list_bin	
+elif [[ $1 == '-s' ]]; then
+	if [[ $# -eq 1 ]]; then
+		help_menu
+	else
+		search_bin $2 
 	fi
 else
 	delete_file
