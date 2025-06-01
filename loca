@@ -19,8 +19,8 @@ def location():
             print("\nPUBLIC IP INFO:")
             print("---------------------")
             print(f"[+]ip = {data['ip']}\n[+]city = {data['city']}\n[+]region = {data['region']}\n[+]timezone = {data['timezone']}")
-    except:
-        print(f"[-] Failed to resolve {url} ")
+    except Exception as e:
+        print(f"[-] Failed to resolve {url}, {e} ")
         exit()
 
 
@@ -44,8 +44,8 @@ def dnsLeakTest():
 
             print("\n")
 
-    except:
-        print(f"[-] Failed to resolve {dnsLeakUrl} ")
+    except Exception as e:
+        print(f"[-] Failed to resolve {dnsLeakUrl}, {e} ")
         exit()
 
 
