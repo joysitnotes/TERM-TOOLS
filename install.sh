@@ -5,7 +5,7 @@ sudo chmod +x update
 sudo chmod +x web
 sudo chmod +x rc
 
-echo "nvim $HOME/todolist.txt" > li
+echo "vim $HOME/todolist.txt" > li
 sudo chmod +x li
 gcc cr.c -o cr
 gcc jc.c -o jc
