@@ -1,7 +1,9 @@
 #!/usr/bin/python3
-
 import requests
 from  bs4 import BeautifulSoup
+
+# Script to check location and Dnsleak when connected to a VPN/Proxy
+# pip install beauifulsoup4, requests
 
 url = 'https://ipinfo.io/json'
 dnsLeakUrl = 'https://www.dnsleaktest.com/'
