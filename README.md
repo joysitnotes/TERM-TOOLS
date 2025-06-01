@@ -4,7 +4,7 @@
 | Command | Description                                      |
 |---------|--------------------------------------------------|
 | `mash`  | Mac changer                                      |
-| `loca`  | Show current location and test for DNS leak      |
+| `loca`  | Show current location and test for DNS leaks     |
 | `cr`    | Compile and run C/C++ programs                  |
 | `jc`    | Just compile C/C++ programs                     |
 | `ipl`   | IP locate, locate IPs                           |
