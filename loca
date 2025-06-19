@@ -45,7 +45,7 @@ def dnsLeakTest():
             print("\n")
 
     except Exception as e:
-        print(f"[-] Failed to resolve {dnsLeakUrl}, {e} ")
+        print(f"[-] Failed to resolve {dnsLeakUrl} ")
         exit()
 
 
