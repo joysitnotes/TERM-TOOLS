@@ -1,3 +1,5 @@
+
+
 sudo chmod +x loca
 sudo chmod +x mash
 sudo chmod +x ipl
@@ -34,4 +36,6 @@ sudo cp /usr/bin/clear /usr/bin/cls
 sudo cp rc /usr/bin
 echo "rc Installed"
 echo "rc Installed"
+
+sudo apt install locate neovim -y && sudo updatedb
 
