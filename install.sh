@@ -31,6 +31,7 @@ echo "cr Installed"
 sudo cp jc /usr/bin
 echo "jc Installed"
 sudo cp li /usr/bin
+
 echo "li Installed"
 sudo cp /usr/bin/clear /usr/bin/cls
 sudo cp rc /usr/bin
@@ -39,3 +40,5 @@ echo "rc Installed"
 
 sudo apt install locate neovim -y && sudo updatedb
 
+mkdir $HOME/.config/nvim/
+touch $HOME/.config/nvim/init.vim
