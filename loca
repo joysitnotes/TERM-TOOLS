@@ -1,4 +1,17 @@
 #!/usr/bin/python3
+
+import subprocess
+import sys
+
+try:
+    from bs4 import BeautifulSoup
+    #print("Beautiful Soup is installed.")
+    pass
+except ImportError:
+    print("Beautiful Soup is not installed. Installing now...")
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'beautifulsoup4', '--break-system-packages'])
+    print("Beautiful Soup has been installed.")
+
 import requests
 from  bs4 import BeautifulSoup
 
